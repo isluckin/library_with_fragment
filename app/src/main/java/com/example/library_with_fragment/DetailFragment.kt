@@ -1,12 +1,19 @@
 package com.example.library_with_fragment
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.library_with_fragment.databinding.FragmentDetailBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DetailFragment : Fragment() {
 
@@ -30,10 +37,31 @@ class DetailFragment : Fragment() {
     ): View {
         _binding = FragmentDetailBinding.inflate(inflater, container, false)
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.errorEvent.observe(viewLifecycleOwner) { errorMessage ->
+            errorMessage?.let {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Error")
+                    .setMessage(it)
+                    .setPositiveButton("OK") { _, _ ->
+                        viewModel.clearError()
+                    }
+                    .show()
+            }
+        }
+        setupStartFragment()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun setupStartFragment() {
         if (item == null && !isEditMode) {
             binding.root.visibility = View.GONE
             return
@@ -42,44 +70,21 @@ class DetailFragment : Fragment() {
             setupEditableFields()
             binding.saveButton.visibility = View.VISIBLE
             binding.saveButton.setOnClickListener {
-                val newItem = createItemFromInputs()
-                viewModel.addItem(newItem)
-                parentFragmentManager.popBackStack()
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO){
+                        viewModel.addItem(createItemFromInputs())
+                    }
+                    if (viewModel.errorEvent.value == null){
+                    parentFragmentManager.popBackStack()
+                    }
+                }
             }
         } else {
             binding.saveButton.visibility = View.GONE
             fillItemData()
         }
 
-        item?.let { item ->
-            binding.bigItemImage.setImageResource(item.imageRes)
-            binding.bigItemName.setText(item.itemName)
-            binding.bigItemID.setText(item.itemId.toString())
-
-            when (item) {
-                is Book -> {
-                    binding.bookGroup.visibility = View.VISIBLE
-                    binding.bookAuthor.setText(item.bookAuthor)
-                    binding.bookPages.setText(item.bookPages.toString())
-                }
-
-                is Newspaper -> {
-                    binding.newspaperGroup.visibility = View.VISIBLE
-                    binding.newspaperNumber.setText(item.newspaperNumber.toString())
-                    binding.newspaperMonth.setText(item.month)
-                }
-
-                is Disk -> {
-                    binding.diskGroup.visibility = View.VISIBLE
-                    binding.diskType.setText(item.diskType)
-                }
-            }
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+     fillItemData()
     }
 
     private fun setupEditableFields() {

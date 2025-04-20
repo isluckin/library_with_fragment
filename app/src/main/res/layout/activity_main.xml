@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!--<?xml version="1.0" encoding="utf-8"?>-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -15,6 +15,8 @@
         android:text="Add new Item"
         android:textColor="@color/black"
         android:textSize="30sp" />
+
+
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/single_container"

@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.widget.RadioGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.library_with_fragment.databinding.ActivityMainBinding
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,60 +22,20 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-        if (viewModel.isInEditMode && viewModel.currentlyEditingItem != null) {
-            val detailFragment = DetailFragment.newInstance(
-                viewModel.currentlyEditingItem, isEditMode = true
-            )
-            if (isLandscape) {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.list_container, ListFragment()).commit()
-
-            } else {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.single_container, detailFragment).addToBackStack(null).commit()
-            }
+        lifecycleScope.launch {
+            viewModel.loadItems()
+            setup(savedInstanceState)
         }
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (savedInstanceState == null) {
-            if (isLandscape) {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.list_container, ListFragment())
-                    .replace(R.id.detail_container, DetailFragment.newInstance(null)).commit()
-            } else {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.single_container, ListFragment()).commit()
-            }
-        } else {
-            if (isLandscape) {
-                val listFragment = supportFragmentManager.findFragmentByTag("listFragment")
-                val detailFragment = supportFragmentManager.findFragmentByTag("detailFragment")
-
-                if (listFragment == null) {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.list_container, ListFragment(), "listFragment").commit()
-                }
-
-                if (detailFragment == null) {
-                    supportFragmentManager.beginTransaction().replace(
-                        R.id.detail_container, DetailFragment.newInstance(null), "detailFragment"
-                    ).commit()
-                }
-            } else {
-                val listFragment = supportFragmentManager.findFragmentByTag("listFragment")
-
-                if (listFragment == null) {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.single_container, ListFragment(), "listFragment").commit()
-                }
-            }
-        }
 
         binding.addButton.setOnClickListener {
-            showDialog()
+            lifecycleScope.launch {
+                showDialog()
+            }
         }
 
         viewModel.selectedItem.observe(this) { item ->
@@ -134,5 +96,55 @@ class MainActivity : AppCompatActivity() {
             }.create()
 
         dialog.show()
+    }
+    private fun setup(state: Bundle?)
+    {
+        if (viewModel.isInEditMode && viewModel.currentlyEditingItem != null) {
+            val detailFragment = DetailFragment.newInstance(
+                viewModel.currentlyEditingItem, isEditMode = true
+            )
+            if (isLandscape) {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.list_container, ListFragment()).commit()
+
+            } else {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.single_container, detailFragment).addToBackStack(null).commit()
+            }
+        }
+        if (state == null) {
+            if (isLandscape) {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.list_container, ListFragment())
+                    .replace(R.id.detail_container, DetailFragment.newInstance(null)).commit()
+            } else {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.single_container, ListFragment()).commit()
+            }
+        } else {
+            if (isLandscape) {
+                val listFragment = supportFragmentManager.findFragmentByTag("listFragment")
+                val detailFragment = supportFragmentManager.findFragmentByTag("detailFragment")
+
+                if (listFragment == null) {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.list_container, ListFragment(), "listFragment").commit()
+                }
+
+                if (detailFragment == null) {
+                    supportFragmentManager.beginTransaction().replace(
+                        R.id.detail_container, DetailFragment.newInstance(null), "detailFragment"
+                    ).commit()
+                }
+            } else {
+                val listFragment = supportFragmentManager.findFragmentByTag("listFragment")
+
+                if (listFragment == null) {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.single_container, ListFragment(), "listFragment").commit()
+                }
+            }
+        }
+
     }
 }
