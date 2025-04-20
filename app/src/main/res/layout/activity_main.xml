@@ -16,6 +16,8 @@
         android:textColor="@color/black"
         android:textSize="30sp" />
 
+
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/single_container"
         android:name="androidx.fragment.app.Fragment"
