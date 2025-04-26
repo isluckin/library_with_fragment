@@ -1,3 +1,12 @@
+
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+=======
 <!--&lt;!&ndash;<?xml version="1.0" encoding="utf-8"?>&ndash;&gt;-->
 <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
 <!--    xmlns:tools="http://schemas.android.com/tools"-->
@@ -5,6 +14,7 @@
 <!--    android:layout_width="match_parent"-->
 <!--    android:layout_height="match_parent"-->
 <!--    android:orientation="vertical">-->
+
 
 <!--    <Button-->
 <!--        android:id="@+id/addButton"-->
@@ -18,6 +28,16 @@
 
 
 
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/single_container"
+        android:name="androidx.fragment.app.Fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity"
+        tools:layout="@layout/fragment_list" />
+</LinearLayout>
+=======
 <!--    <androidx.fragment.app.FragmentContainerView-->
 <!--        android:id="@+id/single_container"-->
 <!--        android:name="androidx.fragment.app.Fragment"-->
@@ -26,4 +46,5 @@
 <!--        tools:context=".MainActivity"-->
 <!--        tools:layout="@layout/fragment_list" />-->
 <!--</LinearLayout>-->
+
 
