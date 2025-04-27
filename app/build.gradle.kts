@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.ksp
 
 
 plugins {
@@ -5,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -44,6 +46,10 @@ android {
 
 }
 
+ksp{
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -58,6 +64,7 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.fragment)
+    implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -65,12 +72,14 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    val appcompat_version = "1.7.0"
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.appcompat.resources)
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.appcompat:appcompat-resources:1.7.0")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
     implementation ("androidx.fragment:fragment-ktx:1.8.6")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
-    implementation (libs.shimmer)
+    implementation ("com.facebook.shimmer:shimmer:0.5.0")
+    implementation ("androidx.room:room-runtime:2.7.1")
+    implementation ("androidx.room:room-ktx:2.7.1")
+    ksp("androidx.room:room-compiler:2.7.1")
 
 }

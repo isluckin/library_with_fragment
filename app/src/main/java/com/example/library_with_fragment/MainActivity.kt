@@ -5,8 +5,8 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.RadioGroup
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.library_with_fragment.databinding.ActivityMainBinding
 import kotlinx.coroutines.launch
@@ -14,7 +14,11 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: ItemViewModel by viewModels()
+    private val viewModel: ItemViewModel by lazy {
+        ViewModelProvider(
+            this, ItemViewModelFactory(applicationContext)
+        ).get(ItemViewModel::class.java)
+    }
 
     private val isLandscape: Boolean
         get() = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -52,6 +56,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -97,8 +102,8 @@ class MainActivity : AppCompatActivity() {
 
         dialog.show()
     }
-    private fun setup(state: Bundle?)
-    {
+
+    private fun setup(state: Bundle?) {
         if (viewModel.isInEditMode && viewModel.currentlyEditingItem != null) {
             val detailFragment = DetailFragment.newInstance(
                 viewModel.currentlyEditingItem, isEditMode = true

@@ -9,10 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.library_with_fragment.ItemViewModel.SortType
 import com.example.library_with_fragment.databinding.FragmentListBinding
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 class ListFragment : Fragment() {
 
@@ -36,18 +35,18 @@ class ListFragment : Fragment() {
 
         adapter = ItemAdapter {
 
-                viewModel.selectItem(it)
-                viewModel.errorEvent.observe(viewLifecycleOwner) { errorMessage ->
-                    errorMessage?.let {
-                        AlertDialog.Builder(requireContext())
-                            .setTitle("Error")
-                            .setMessage(it)
-                            .setPositiveButton("OK") { _, _ ->
-                                viewModel.clearError()
-                            }
-                            .show()
-                    }
+            viewModel.selectItem(it)
+            viewModel.errorEvent.observe(viewLifecycleOwner) { errorMessage ->
+                errorMessage?.let {
+                    AlertDialog.Builder(requireContext())
+                        .setTitle("Error")
+                        .setMessage(it)
+                        .setPositiveButton("OK") { _, _ ->
+                            viewModel.clearError()
+                        }
+                        .show()
                 }
+            }
 
 
         }
@@ -84,6 +83,16 @@ class ListFragment : Fragment() {
                 }
             }
         }
+
+        binding.sortBtn.setOnClickListener {
+            viewModel.setSortType(
+                when (viewModel.getSortType()) {
+                    SortType.BY_NAME -> SortType.BY_DATE
+                    SortType.BY_DATE -> SortType.BY_NAME
+                    null -> SortType.BY_NAME
+                }
+            )
+        }
     }
 
     override fun onPause() {
@@ -96,4 +105,5 @@ class ListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }

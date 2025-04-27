@@ -10,8 +10,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.library_with_fragment.databinding.FragmentDetailBinding
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -32,8 +30,7 @@ class DetailFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDetailBinding.inflate(inflater, container, false)
         return binding.root
@@ -44,13 +41,10 @@ class DetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.errorEvent.observe(viewLifecycleOwner) { errorMessage ->
             errorMessage?.let {
-                AlertDialog.Builder(requireContext())
-                    .setTitle("Error")
-                    .setMessage(it)
+                AlertDialog.Builder(requireContext()).setTitle("Error").setMessage(it)
                     .setPositiveButton("OK") { _, _ ->
                         viewModel.clearError()
-                    }
-                    .show()
+                    }.show()
             }
         }
         setupStartFragment()
@@ -71,11 +65,11 @@ class DetailFragment : Fragment() {
             binding.saveButton.visibility = View.VISIBLE
             binding.saveButton.setOnClickListener {
                 lifecycleScope.launch {
-                    withContext(Dispatchers.IO){
+                    withContext(Dispatchers.IO) {
                         viewModel.addItem(createItemFromInputs())
                     }
-                    if (viewModel.errorEvent.value == null){
-                    parentFragmentManager.popBackStack()
+                    if (viewModel.errorEvent.value == null) {
+                        parentFragmentManager.popBackStack()
                     }
                 }
             }
@@ -84,7 +78,7 @@ class DetailFragment : Fragment() {
             fillItemData()
         }
 
-     fillItemData()
+        fillItemData()
     }
 
     private fun setupEditableFields() {
